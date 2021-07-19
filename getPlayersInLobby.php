@@ -20,7 +20,7 @@
             $tmpObject->nickname = $row["nickname"];
             $tmpObject->UUID = $row["UUID"];
             $tmpObject->UEID = $row["UEID"];
-            $tempObject->score = $row["score"];
+            $tmpObject->score = $row["score"];
             array_push($players, $tmpObject);
         }
         echo json_encode($players);

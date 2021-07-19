@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <title>Tankz</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="js/ajaxFunctions.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <!-- link to css  -->
+    <link rel="stylesheet" href="css/master.css" type="text/css" />
+</head>
+
+<body>
+    <div id="titleScreen" class="screen">
+        <div id="title">Tankz</div>
+        <div id="mainMenuOptions">
+            <div class="mainMenuButton" onclick="createLobbyAction()">Create Lobby</div>
+            <div class="mainMenuButton">Join Lobby</div>
+            <div class="mainMenuButton">Settings</div>
+        </div>
+    </div>
+    <div class="screen" id="waitingRoom">
+        <div id="waitingRoomContainer">
+            <div id="controlBar">
+                <div class="mainMenuButton" id="startButton">Start</div>
+                <div id="lobbyCode"></div>
+            </div>
+            <div id="playerListContainer">
+                <div id="playerListHeader">
+                    Players
+                </div>
+                <div id="playerList">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Live reload stuff -->
+    <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #003399;
+    --secondary: #009933;
+    --tertiary: #993300;
+    --main-bg-color: #fefefe;
+    --translucent-bg-color: rgba(0, 0, 0, 0.5);
+}
+
+body {
+    background-color: var(--main-bg-color);
+    margin: 0;
+    background: 0;
+    font-family: 'Mukta', sans-serif;
+    min-width: 100vw;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: 0;
+}
+
+
+#titleScreen {
+    position: absolute;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    /* background: blue; */
+    font-size: 5rem;
+}
+
+#mainMenuOptions {
+    display: flex;
+
+    flex-direction: column;
+}
+
+.mainMenuButton {
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    background-color: var(--secondary);
+}
+
+
+#controlBar {
+    display: flex;
+    flex-direction: column;
+
+}
+
+
+#waitingRoomContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    font-size: 5rem;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    background: var(--translucent-bg-color);
+}
+
+#controlBar {
+    background: var(--translucent-bg-color);
+    padding: 1rem;
+}
+
+#playerListContainer {}
