@@ -1,5 +1,5 @@
  const host = window.location.host;
- const socket = io("ws://" + host + ":6969");
+ const socket = io("ws://" + window.location.host + ":6969");
  console.log(host)
 
  socket.on("connect", function (data) {
