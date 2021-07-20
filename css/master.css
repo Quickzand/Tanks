@@ -65,6 +65,7 @@ body {
 #controlBar {
     background: var(--translucent-bg-color);
     padding: 1rem;
+
 }
 
 #playerListContainer {}
