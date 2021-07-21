@@ -17,10 +17,22 @@
     font-size: 2rem;
     display: flex;
     flex-direction: row;
+    place-items: center;
+}
+
+input[type=radio] {
+    width: 1rem;
+}
+
+input[type=text],
+input[type=button] {
+    font-size: 2rem;
 }
 
 #controls>div {
     margin-right: 1rem;
+    display: flex;
+    place-items: center;
 }
 
 #controls label {

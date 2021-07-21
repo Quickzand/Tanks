@@ -14,7 +14,7 @@ let players = [];
 let map = [];
 
 class player {
-    constructor(id, name, socket, playerNum, x, y, rotation) {
+    constructor(id, name, socket, playerNum, x, y, rotation, color) {
         this.id = id;
         this.name = name;
         this.socket = socket;
@@ -25,6 +25,8 @@ class player {
         this.y = y;
         this.rotation = rotation;
         this.isAlive = true;
+        this.isHost = false;
+        this.color = color;
     }
 }
 
@@ -40,6 +42,8 @@ function updatePlayerList() {
             x: players[i].x,
             y: players[i].y,
             rotation: players[i].rotation,
+            isAlive: players[i].isAlive,
+            color: players[i].color
         });
     }
     io.emit('playerList', playerList);
@@ -74,8 +78,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on("connectToGame", function (data) {
-
-        tmpPlayer = new player(socket.id, data.name, socket, data.playerNum, data.x, data.y, data.rotation);
+        tmpPlayer = new player(socket.id, data.name, socket, data.playerNum, data.x, data.y, data.rotation, data.color);
         players.push(tmpPlayer);
         updatePlayerList()
         console.log("Added player ", tmpPlayer.name)
@@ -90,8 +93,27 @@ io.on('connection', function (socket) {
     socket.on("setMap", function (data) {
         map = data;
         console.log("Map updated")
+        for (i in players) {
+            players[i].isAlive = true;
+        }
+        updatePlayerList();
         io.emit("updateMap", map);
     });
+
+    socket.on("becomeHost", function () {
+        for (var i in players) {
+            if (players[i].isHost) {
+                players[i].socket.emit("removeHost");
+            }
+            players[i].isHost = false;
+        }
+        let player = players.find(function (player) {
+            return player.id === socket.id;
+        });
+        player.isHost = true;
+        console.log("Transferred hostship")
+    });
+
 
     socket.on("move", function (data) {
         let player = players.find(function (player) {
@@ -109,6 +131,15 @@ io.on('connection', function (socket) {
         player.isReady = true;
         updatePlayerList()
     });
+    socket.on("playerIsAlive", function (data) {
+        let player = players.find(function (player) {
+            return player.playerNum == data.playerNum;
+        });
+        player ? player.isAlive = data.isAlive : console.log("Could not find player");
+
+        updatePlayerList()
+    });
+
     socket.on("unready", function (data) {
         let player = players.find(function (player) {
             return player.id === socket.id;
@@ -124,6 +155,7 @@ io.on('connection', function (socket) {
         updatePlayerList()
     });
 
+    // Socket command to change the display name of the player
     socket.on("updatePlayerName", function (data) {
         let player = players.find(function (player) {
             return player.id === socket.id;
@@ -132,10 +164,12 @@ io.on('connection', function (socket) {
         updatePlayerList()
     });
 
+    // Socket command run to update player position data
     socket.on("playerMove", function (data) {
         let player = players.find(function (player) {
             return player.id === socket.id;
         });
+
         player.x = data.x;
         player.y = data.y;
         player.rotation = data.rotation;
@@ -144,4 +178,6 @@ io.on('connection', function (socket) {
     });
 });
 
+
+// Starts an HTTP server on the given port, this is what actually starts the server
 httpServer.listen(port, () => console.log("listening on port " + port));

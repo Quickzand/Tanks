@@ -11,22 +11,43 @@
   		bulletArr = [];
   		isAlive = true;
   		points = 0;
+  		playerNum = 0;
 
-  		constructor(sprite, x, y, rotation) {
+  		constructor(Id, x, y, rotation, color, nickname) {
   			/* store everything */
+  			this.id = Id
   			this.x = x;
   			this.y = y;
   			this.rotation = rotation;
-  			this.sprite = sprite;
-
+  			this.nickname = nickname;
   			/* make the html element */
   			let tankElem = document.createElement("img");
-  			tankElem.src = sprite;
+  			tankElem.src = "";
   			tankElem.className = "tank";
   			container.appendChild(tankElem);
   			this.obj = tankElem;
+  			this.setColor(color)
+
+
   			this.setPosAndRot();
   		}
+
+  		setColor(color) {
+  			switch (color) {
+  				case "red":
+  					this.sprite = "redTank.png";
+  					break;
+  				case "blue":
+  					this.sprite = "blueTank.png";
+  					break;
+  				case "green":
+  					this.sprite = "greenTank.png";
+  					break;
+  			}
+  			this.obj.src = this.sprite;
+  			this.color = color;
+  		}
+
   		update() {
   			this.setPosAndRot();
   		}
@@ -103,6 +124,13 @@
   			ctx.drawImage(this.obj, this.x, this.y, this.width, this.height);
   			ctx.restore();
 
+
+  			// Code to draw the nickname under the tank
+  			ctx.font = "20px Arial";
+  			ctx.fillStyle = "black";
+  			ctx.textAlign = "center";
+  			ctx.fillText(this.nickname, this.x + this.width / 2, this.y + this.height + 20);
+
   			/* Draw corners for debug */
   			/*var corners = this.getCorners(this.x, this.y, this.rotation);
 
@@ -140,8 +168,10 @@
   		}
   		destroy() {
   			this.isAlive = false;
+
   			var index = aliveTankArr.indexOf(this);
   			if (index >= 0) {
+  				setPlayerIsAlive(playerNum, false);
   				aliveTankArr.splice(index, 1);
   			}
   		}
@@ -242,6 +272,14 @@
   			return Math.abs((B[0] * A[1] - A[0] * B[1]) + (C[0] * B[1] - B[0] * C[1]) + (A[0] * C[1] - C[0] * A[1])) / 2
   		}
   	}
+
+  	function createTank(id, x, y, rotation, color) {
+  		var tank = new Tank(id, x, y, rotation, color);
+  		aliveTankArr.push(tank);
+  		return tank;
+  	}
+
+
 
   	/* Le maze code */
   	class Wall {
@@ -567,17 +605,8 @@
   	var gameState = "loading map";
 
   	/* define le tanks */
-  	var redTank = new Tank("redtank.png", 50, 50, 0);
-  	tankArr.push(redTank);
-  	playerTank = redTank;
 
-  	var blueTank = new Tank("bluetank.png", 100, 100, 0);
-  	tankArr.push(blueTank);
-
-
-  	var greenTank = new Tank("greentank.png", 100, 100, 0);
-  	tankArr.push(greenTank);
-
+  	playerTank = currentPlayer.tank;
 
   	//need this at the end
   	aliveTankArr = tankArr.slice();
@@ -590,31 +619,35 @@
   	function updateFrame() {
   		if (gameState == "loading map") {
   			//Set up the maze
-  			newMaze = new Maze(canvas.width, canvas.height, 6, 12);
-  			newMaze.setup();
-  			newMaze.draw();
-  			newMaze.wallCoordBuilder();
-  			newMaze.removeDupes();
-  			wallArray = newMaze.wallArray;
-  			if (playerNum == 1) {
-  				setMap()
-  			}
-  			gameState = "playing";
+  			if (currentPlayer.isHost) {
+  				newMaze = new Maze(canvas.width, canvas.height, 6, 12);
+  				newMaze.setup();
+  				newMaze.draw();
+  				newMaze.wallCoordBuilder();
+  				newMaze.removeDupes();
+  				wallArray = newMaze.wallArray;
+  				for (var i = 0; i < tankArr.length; i++) {
+  					var newX = Math.random() * canvas.width;
+  					var newY = Math.random() * canvas.height;
+  					var newRotation = Math.random() * 360;
 
-  			for (var i = 0; i < tankArr.length; i++) {
-  				var newX = Math.random() * canvas.width;
-  				var newY = Math.random() * canvas.height;
-  				var newRotation = Math.random() * 360;
+  					if (tankArr[i].checkIfInBounds(tankArr[i].getCorners(newX, newY, newRotation))) {
+  						tankArr[i].x = newX;
+  						tankArr[i].y = newY;
+  						tankArr[i].rotation = newRotation;
+  						tankArr[i].isAlive = true;
 
-  				if (tankArr[i].checkIfInBounds(tankArr[i].getCorners(newX, newY, newRotation))) {
-  					tankArr[i].x = newX;
-  					tankArr[i].y = newY;
-  					tankArr[i].rotation = newRotation;
-  					tankArr[i].isAlive = true;
-  				} else {
-  					i -= 1;
+  					} else {
+  						i -= 1;
+  					}
   				}
+  				setMap();
+  				gameState = "playing";
   			}
+
+
+
+
   			//Load in the tanks
   			aliveTankArr = tankArr.slice();
   		} else if (gameState == "playing" || gameState == "finishing round") {
@@ -651,10 +684,6 @@
   			/* Canvas stuff */
   			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  			for (var i = 0; i < redTank.bulletArr.length; i++) {
-
-  			}
-
   			for (var i = 0; i < aliveTankArr.length; i++) {
   				aliveTankArr[i].update();
   			}
@@ -680,7 +709,7 @@
   			}
   			gameState = "loading map";
   		}
-  		updatePlayerPosData(playerTank.x, playerTank.y, playerTank.rotation)
+
 
 
   		function genRandomMaze() {

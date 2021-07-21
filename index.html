@@ -15,15 +15,20 @@
       <label for="nicknameInput">Nickname:</label>
       <input type="text" id="nicknameInput" value="Guest">
     </div>
-    <div id="playerSelection">
-      <input type="radio" name="playerSelection" value="1" id="p1" checked />
-      <label for="p1">Player 1</label>
+    <div id="colorSelection">
+      <input type="radio" name="colorSelection" value="red" id="red" checked />
+      <label for="p1">Red</label>
 
-      <input type="radio" name="playerSelection" value="2" id="p2">
-      <label for="p2">Player 2</label>
+      <input type="radio" name="colorSelection" value="green" id="green">
+      <label for="p2">Green</label>
 
-      <input type="radio" name="playerSelection" value="3" id="p3">
-      <label for="p3">Player 3</label>
+      <input type="radio" name="colorSelection" value="blue" id="blue">
+      <label for="p3">Blue</label>
+    </div>
+    <div id="becomeHostButtonContainer">
+      <button onclick="becomeHost()">
+        Become Host
+      </button>
     </div>
   </div>
 
