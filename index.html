@@ -1,34 +1,40 @@
 <html>
 
 <head>
-    <title>Tankz</title>
-    <script src="libraries/jquery.js" defer></script>
-    <script src="libraries/socketIO.js" defer></script>
-    <script src="js/main.js" defer></script>
-    <!-- link to css  -->
-    <link rel="stylesheet" href="css/master.css" type="text/css" />
+  <script src="libraries/jquery.js" defer></script>
+  <script src="libraries/socketIO.js" defer></script>
+  <script src="js/socket.js" defer></script>
+
+  <link rel="stylesheet" href="css/master.css" />
+
 </head>
 
 <body>
+  <div id="controls">
+    <div id="nickname">
+      <label for="nicknameInput">Nickname:</label>
+      <input type="text" id="nicknameInput" value="Guest">
+    </div>
     <div id="playerSelection">
-        <input type="radio" name="playerSelection" value="1" id="p1" checked />
-        <label for="p1">Player 1</label>
+      <input type="radio" name="playerSelection" value="1" id="p1" checked />
+      <label for="p1">Player 1</label>
 
-        <input type="radio" name="playerSelection" value="2" id="p2">
-        <label for="p2">Player 2</label>
+      <input type="radio" name="playerSelection" value="2" id="p2">
+      <label for="p2">Player 2</label>
 
-        <input type="radio" name="playerSelection" value="3" id="p3">
-        <label for="p3">Player 3</label>
-        <input type="text" name="playerName" id="playerName" value="Guest">
+      <input type="radio" name="playerSelection" value="3" id="p3">
+      <label for="p3">Player 3</label>
     </div>
+  </div>
 
-    <div id="playerContainer">
-        Player 1:<div id="p1List"></div>
-        Player 2:<div id="p2List"></div>
-        Player 3:<div id="p3List"></div>
-    </div>
-    <!-- Live reload stuff -->
-    <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+  <div id="screenContainer">
+    <canvas id="canvas" width="1800px" height="800px"></canvas>
+    <img id="redtank" class="tank" src="redtank.png">
+    <img id="greentank" class="tank" src="greentank.png">
+    <img id="blutank" class="tank" src="bluetank.png">
+  </div>
 </body>
+<script src="js/gameController.js" defer></script>
+
 
 </html>

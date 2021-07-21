@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <title>Tankz</title>
+    <script src="libraries/jquery.js" defer></script>
+    <script src="libraries/socketIO.js" defer></script>
+    <script src="js/socket.js" defer></script>
+    <!-- link to css  -->
+    <link rel="stylesheet" href="css/master.css" type="text/css" />
+</head>
+
+<body>
+    <div id="playerSelection">
+        <input type="radio" name="playerSelection" value="1" id="p1" checked />
+        <label for="p1">Player 1</label>
+
+        <input type="radio" name="playerSelection" value="2" id="p2">
+        <label for="p2">Player 2</label>
+
+        <input type="radio" name="playerSelection" value="3" id="p3">
+        <label for="p3">Player 3</label>
+        <input type="text" name="playerName" id="playerName" value="Guest">
+    </div>
+
+    <div id="playerContainer">
+        Player 1:<div id="p1List"></div>
+        Player 2:<div id="p2List"></div>
+        Player 3:<div id="p3List"></div>
+    </div>
+    <!-- Live reload stuff -->
+    <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+</body>
+
+</html>

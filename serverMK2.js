@@ -11,19 +11,20 @@ var io = require('socket.io')(httpServer, {
 // io.listen(6969);
 let rooms = [];
 let players = [];
-
+let map = [];
 
 class player {
-    constructor(id, name, socket, playerNum) {
+    constructor(id, name, socket, playerNum, x, y, rotation) {
         this.id = id;
         this.name = name;
         this.socket = socket;
         this.playerNum = playerNum;
         this.room = null;
         this.isReady = false;
-        this.x = 0;
-        this.y = 0;
-        this.rotation = 0;
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
+        this.isAlive = true;
     }
 }
 
@@ -73,7 +74,8 @@ io.on('connection', function (socket) {
     });
 
     socket.on("connectToGame", function (data) {
-        tmpPlayer = new player(socket.id, data.name, socket, data.playerNum);
+
+        tmpPlayer = new player(socket.id, data.name, socket, data.playerNum, data.x, data.y, data.rotation);
         players.push(tmpPlayer);
         updatePlayerList()
         console.log("Added player ", tmpPlayer.name)
@@ -84,6 +86,13 @@ io.on('connection', function (socket) {
         console.log("Player disconnected")
         updatePlayerList()
     });
+
+    socket.on("setMap", function (data) {
+        map = data;
+        console.log("Map updated")
+        io.emit("updateMap", map);
+    });
+
     socket.on("move", function (data) {
         let player = players.find(function (player) {
             return player.id === socket.id;
@@ -121,6 +130,17 @@ io.on('connection', function (socket) {
         });
         player.name = data.name;
         updatePlayerList()
+    });
+
+    socket.on("playerMove", function (data) {
+        let player = players.find(function (player) {
+            return player.id === socket.id;
+        });
+        player.x = data.x;
+        player.y = data.y;
+        player.rotation = data.rotation;
+        updatePlayerList()
+
     });
 });
 
