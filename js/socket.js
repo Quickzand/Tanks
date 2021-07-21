@@ -8,6 +8,7 @@
      y: 0,
      rotation: 0,
  }
+ let playerList = []
  socket.on("connect", function (data) {
      console.log("Connected to game");
      // Sends the player data to be put into the game server
@@ -33,7 +34,22 @@
  });
 
 
+ socket.on("updateAliveTankArr", function (data) {
+     aliveTankArr = data;
+ })
+
+
+ socket.on("startRound", function () {
+     tankArr = []
+     for (i in playerList) {
+         tankArr.push(new Tank(playerList[i].id, playerList[i].x, playerList[i].y, playerList[i].rotation, playerList[i].color, playerList[i].name));
+     }
+     aliveTankArr = tankArr;
+ })
+
+
  socket.on("playerList", (data) => {
+     playerList = data;
      updateLocalPlayerPositions(data);
  });
 
@@ -62,6 +78,10 @@
              "rotation": rotation
          });
      }
+ }
+
+ function startRound() {
+     socket.emit("requestStartRound");
  }
 
 
@@ -96,6 +116,9 @@
 
  function updateMap(mapData) {
      wallArray = mapData
+     gameState = "playing";
+
+
  }
 
  function setMap() {
@@ -104,33 +127,18 @@
 
 
 
+
+
  function updateLocalPlayerPositions(playerList) {
-     //  for (i in playerList) {
-     //      switch (playerList[i].playerNum) {
-     //          case "1":
-     //              redTank.x = playerList[i].x;
-     //              redTank.y = playerList[i].y;
-     //              redTank.rotation = playerList[i].rotation;
-     //              if (!playerList[i].isAlive) {
-     //                  redTank.destroy()
-     //              }
-     //              break;
-     //          case "2":
-     //              blueTank.x = playerList[i].x;
-     //              blueTank.y = playerList[i].y;
-     //              blueTank.rotation = playerList[i].rotation;
-     //              if (!playerList[i].isAlive) {
-     //                  blueTank.destroy()
-     //              }
-     //              break;
-     //          case "3":
-     //              greenTank.x = playerList[i].x;
-     //              greenTank.y = playerList[i].y;
-     //              greenTank.rotation = playerList[i].rotation;
-     //              if (!playerList[i].isAlive) {
-     //                  greenTank.destroy()
-     //              }
-     //              break;
-     //      }
-     //  }
+     for (i in playerList) {
+         if (aliveTankArr) {
+             for (j in aliveTankArr) {
+                 if (playerList[i].id == aliveTankArr[j].id) {
+                     aliveTankArr[j].x = playerList[i].x;
+                     aliveTankArr[j].y = playerList[i].y;
+                     aliveTankArr[j].rotation = playerList[i].rotation;
+                 }
+             }
+         }
+     }
  }

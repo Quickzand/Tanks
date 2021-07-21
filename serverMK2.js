@@ -12,6 +12,7 @@ var io = require('socket.io')(httpServer, {
 let rooms = [];
 let players = [];
 let map = [];
+let alivePlayers = [];
 
 class player {
     constructor(id, name, socket, playerNum, x, y, rotation, color) {
@@ -100,6 +101,12 @@ io.on('connection', function (socket) {
         io.emit("updateMap", map);
     });
 
+    socket.on("requestStartRound", function () {
+        console.log("Requested start round")
+        updatePlayerList();
+        io.emit("startRound");
+    });
+
     socket.on("becomeHost", function () {
         for (var i in players) {
             if (players[i].isHost) {
@@ -131,13 +138,9 @@ io.on('connection', function (socket) {
         player.isReady = true;
         updatePlayerList()
     });
-    socket.on("playerIsAlive", function (data) {
-        let player = players.find(function (player) {
-            return player.playerNum == data.playerNum;
-        });
-        player ? player.isAlive = data.isAlive : console.log("Could not find player");
-
-        updatePlayerList()
+    socket.on("setAliveTankArr", function (data) {
+        io.emit("updateAliveTankArr", data);
+        // updatePlayerList()
     });
 
     socket.on("unready", function (data) {

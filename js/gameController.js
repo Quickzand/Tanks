@@ -129,7 +129,9 @@
   			ctx.font = "20px Arial";
   			ctx.fillStyle = "black";
   			ctx.textAlign = "center";
-  			ctx.fillText(this.nickname, this.x + this.width / 2, this.y + this.height + 20);
+  			ctx.fillText(this.x, this.x + this.width / 2, this.y + this.height + 20);
+  			ctx.restore()
+
 
   			/* Draw corners for debug */
   			/*var corners = this.getCorners(this.x, this.y, this.rotation);
@@ -642,6 +644,7 @@
   					}
   				}
   				setMap();
+  				startRound()
   				gameState = "playing";
   			}
 
@@ -685,6 +688,7 @@
   			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   			for (var i = 0; i < aliveTankArr.length; i++) {
+
   				aliveTankArr[i].update();
   			}
   			for (var i = 0; i < tankArr.length; i++) {
@@ -693,7 +697,7 @@
   				}
   			}
 
-  			for (var i = 0; i < newMaze.wallArray.length; i++) {
+  			for (var i = 0; i < wallArray.length; i++) {
   				ctx.beginPath();
   				ctx.moveTo(wallArray[i].startX, wallArray[i].startY);
   				ctx.lineTo(wallArray[i].endX, wallArray[i].endY);
