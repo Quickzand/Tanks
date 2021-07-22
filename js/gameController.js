@@ -12,6 +12,7 @@
   		isAlive = true;
   		points = 0;
   		playerNum = 0;
+  		isHost = false;
 
   		constructor(Id, x, y, rotation, color, nickname) {
   			/* store everything */
@@ -129,7 +130,7 @@
   			ctx.font = "20px Arial";
   			ctx.fillStyle = "black";
   			ctx.textAlign = "center";
-  			ctx.fillText(this.x, this.x + this.width / 2, this.y + this.height + 20);
+  			ctx.fillText(this.nickname, this.x + this.width / 2, this.y + this.height + 20);
   			ctx.restore()
 
 
@@ -173,7 +174,7 @@
 
   			var index = aliveTankArr.indexOf(this);
   			if (index >= 0) {
-  				setPlayerIsAlive(playerNum, false);
+  				// setPlayerIsAlive(playerNum, false);
   				aliveTankArr.splice(index, 1);
   			}
   		}
@@ -608,7 +609,7 @@
 
   	/* define le tanks */
 
-  	playerTank = currentPlayer.tank;
+  	playerTank = currentPlayer;
 
   	//need this at the end
   	aliveTankArr = tankArr.slice();
@@ -628,6 +629,9 @@
   				newMaze.wallCoordBuilder();
   				newMaze.removeDupes();
   				wallArray = newMaze.wallArray;
+  				tankArr = playerList
+  				console.log(tankArr)
+  				tankArr.push(playerTank);
   				for (var i = 0; i < tankArr.length; i++) {
   					var newX = Math.random() * canvas.width;
   					var newY = Math.random() * canvas.height;
@@ -643,7 +647,9 @@
   						i -= 1;
   					}
   				}
-  				setMap();
+  				aliveTankArr = tankArr.slice();
+  				sendUpdatedTankArray();
+  				sendMap();
   				startRound()
   				gameState = "playing";
   			}
@@ -660,7 +666,6 @@
   					gameState = "calculate points";
   				}, 3000);
   			}
-
   			/* rotation handling */
   			if (left == true && right == false) {
   				playerTank.changeRotation(-2)
@@ -674,12 +679,18 @@
   			if (up == true && down == false) {
   				playerTank.changePositionY(yTrig * -2);
   				playerTank.changePositionX(xTrig * 2);
+  				// updatePlayerPosData();
+
   			} else if (up == false && down == true) {
   				playerTank.changePositionY(yTrig * 2);
   				playerTank.changePositionX(xTrig * -2);
+  				// updatePlayerPosData();
+
   			} else if (up == true && down == true) {
   				playerTank.changePositionY(yTrig * -1);
   				playerTank.changePositionX(xTrig * 1);
+  				// updatePlayerPosData();
+
   			}
 
 
@@ -688,7 +699,6 @@
   			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   			for (var i = 0; i < aliveTankArr.length; i++) {
-
   				aliveTankArr[i].update();
   			}
   			for (var i = 0; i < tankArr.length; i++) {
