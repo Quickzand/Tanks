@@ -41,6 +41,7 @@
 
  socket.on("setPlayerList", function (data) {
      console.log("Player list received")
+     console.log(data)
      playerList = data.map(function (player) {
          return new Tank(player.id, player.x, player.y, player.rotation, player.color, player.name)
      });
@@ -57,27 +58,40 @@
  socket.on("playerRemove", function (data) {
      console.log("Removing player ", data.id);
      // Removes the player from the game
+     for (i in aliveTankArr) {
+         if (aliveTankArr[i].id == data.id) {
+             aliveTankArr.destroy();
+         }
+     }
      playerList.splice(playerList.indexOf(findPlayerById(data.id)), 1);
  })
 
 
  socket.on("tanksUpdate", function (data) {
      console.log(data)
+     for (i in data.tankArr) {
+         if (data.tankArr[i].id == currentPlayer.id) {
+             data.splice(i, 1);
+         }
+     }
      // Updates the player position
      playerList = data.tankArray.map(function (player) {
-         return new Tank(player.id, player.x, player.y, player.rotation, player.color, player.name)
+         return new Tank(player.id, player.x, player.y, player.rotation, player.color, player.nickname)
      });
+     console.log(playerList)
      tankArr = playerList;
  })
 
  // Updates name of tank sent by server
  socket.on("updatePlayerColor", function (data) {
+     console.log(data)
      tempPlayer = findPlayerById(data.id);
      tempPlayer.setColor(data.color);
  })
 
  // Updates name of player sent by server
  socket.on("updatePlayerName", function (data) {
+     console.log(data)
      tempPlayer = findPlayerById(data.id);
      tempPlayer.nickname = data.name;
  })
@@ -111,6 +125,28 @@
      gameState = "playing";
  })
 
+ // Updates position of a tank based on the data sent from the server
+ socket.on("updatePlayerPosition", function (data) {
+     //  console.log("Updating player position...");
+     tempPlayer = findPlayerById(data.id);
+     if (tempPlayer) {
+         tempPlayer.x = data.x;
+         tempPlayer.y = data.y;
+         tempPlayer.rotation = data.rotation;
+     }
+ })
+
+ // Receives a bullet array from the server 
+ socket.on("updateBulletArray", function (data) {
+     console.log("Updating bullet array...");
+     // Updates the bullet array
+     tempPlayer = findPlayerById(data.id);
+     tempBulletArray = data.bulletArray.map(function (bullet) {
+         return new Bullet(bullet.x, bullet.y, bullet.rotation, tempPlayer)
+     });
+     tempPlayer.bulletArr = tempBulletArray;
+ });
+
 
 
 
@@ -131,7 +167,7 @@
      currentPlayer.setColor(color);
      socket.emit("updatePlayerColor", {
          id: currentPlayer.id,
-         "color": this.value
+         "color": color
      });
  }
 
@@ -148,6 +184,7 @@
 
  // Sends the updated tank array to all other clients
  function sendUpdatedTankArray() {
+     console.log(playerList)
      console.log("Sending updated tank array...");
      socket.emit("updateTankArray", {
          "id": currentPlayer.id,
@@ -155,16 +192,46 @@
      });
  }
 
+ // Sends an updated array of shot bullets to all other clients
+ function sendBulletArray() {
+     bulletArray = currentPlayer.bulletArr.map(function (bullet) {
+         return {
+             "x": bullet.x,
+             "y": bullet.y,
+             "rotation": bullet.rotation
+         }
+     })
+     socket.emit("updateBulletArray", {
+         "id": currentPlayer.id,
+         "bulletArray": bulletArray
+     })
+ }
+
+
  // Sends the map to other clients
  function sendMap() {
      console.log("Sending map...");
      socket.emit("sendMap", wallArray);
  }
 
+
+ // starts the round
  function startRound() {
      console.log("Starting round...");
      socket.emit("startRound", {
          "id": currentPlayer.id
+     });
+ }
+
+
+ // Sends the position data to other clients
+ function sendPosData() {
+     //  console.log("Sending position data...");
+     socket.emit("sendPosData", {
+         "id": currentPlayer.id,
+         "x": currentPlayer.x,
+         "y": currentPlayer.y,
+         "rotation": currentPlayer.rotation
      });
  }
 

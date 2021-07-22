@@ -101,6 +101,10 @@ io.on('connection', function (socket) {
         });
     });
 
+    socket.on("sendPosData", function (data) {
+        socket.broadcast.emit("updatePlayerPosition", data);
+    })
+
 
     socket.on("updateTankArray", function (data) {
         socket.broadcast.emit("tanksUpdate", data);
@@ -148,6 +152,10 @@ io.on('connection', function (socket) {
         io.emit("updateHost", {
             id: data.id
         });
+    })
+
+    socket.on("updateBulletArray", function (data) {
+        socket.broadcast.emit("updateBulletArray", data);
     })
 
 

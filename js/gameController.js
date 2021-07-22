@@ -276,11 +276,11 @@
   		}
   	}
 
-  	function createTank(id, x, y, rotation, color) {
-  		var tank = new Tank(id, x, y, rotation, color);
-  		aliveTankArr.push(tank);
-  		return tank;
-  	}
+  	// function createTank(id, x, y, rotation, color) {
+  	// 	var tank = new Tank(id, x, y, rotation, color);
+  	// 	aliveTankArr.push(tank);
+  	// 	return tank;
+  	// }
 
 
 
@@ -630,8 +630,7 @@
   				newMaze.removeDupes();
   				wallArray = newMaze.wallArray;
   				tankArr = playerList
-  				console.log(tankArr)
-  				tankArr.push(playerTank);
+
   				for (var i = 0; i < tankArr.length; i++) {
   					var newX = Math.random() * canvas.width;
   					var newY = Math.random() * canvas.height;
@@ -653,7 +652,14 @@
   				startRound()
   				gameState = "playing";
   			}
+  			tempPlayer = undefined;
+  			for (i in tankArr) {
+  				if (tankArr[i].id == currentPlayer.id) {
+  					tempPlayer = tankArr[i];
+  				}
+  			}
 
+  			currentPlayer = playerTank = tempPlayer ? tempPlayer : playerTank;
 
 
 
@@ -676,6 +682,8 @@
   			/* Forward and reverse movement handling */
   			yTrig = Math.cos(degToRad(playerTank.rotation))
   			xTrig = Math.sin(degToRad(playerTank.rotation))
+  			sendPosData();
+  			sendBulletArray();
   			if (up == true && down == false) {
   				playerTank.changePositionY(yTrig * -2);
   				playerTank.changePositionX(xTrig * 2);
