@@ -9,6 +9,10 @@
 
 
 
+
+
+
+
  function findPlayerById(id) {
      for (let i = 0; i < playerList.length; i++) {
          if (playerList[i].id == id) {
